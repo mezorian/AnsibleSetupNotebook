@@ -1,9 +1,9 @@
 - hosts: localhost
   become: true
   tasks:
-  - name: Install htop
-    apt: name=htop
-  - name: Install kolourpaint
-    apt: name=kolourpaint4
-  - name: Install shutter
-    apt: name=shutter
+  - name: Install packages
+    apt: name={{item}}
+    with_items:
+      - htop
+      - kolourpaint4
+      - dino
