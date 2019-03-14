@@ -1,10 +1,11 @@
 - hosts: localhost
   become: true
   tasks:
-  - name: Install packages
+  - name: "Install dependencies"
     apt:
       pkg:
         - htop
         - kolourpaint4
         - dino
+        - peek
       state: present
