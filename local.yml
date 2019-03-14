@@ -2,4 +2,9 @@
   become: true
   tasks:
   - name: Install packages
-    apt: name: ['htop', 'kolourpaint4', 'dino']
+    apt:
+      pkg:
+        - htop
+        - kolourpaint4
+        - dino
+      state: present
