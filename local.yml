@@ -3,3 +3,7 @@
   tasks:
   - name: Install htop
     apt: name=htop
+  - name: Install kolourpaint
+    apt: name=kolourpaint4
+  - name: Install shutter
+    apt: name=shutter
