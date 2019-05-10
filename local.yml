@@ -4,7 +4,17 @@
   - name: "Install dependencies"
     apt:
       pkg:
-        - htop
-        - kolourpaint4
+        - shutter
         - peek
+        - kolourpaint4
+        - gwenview
+        - tuxguitar
+        - vlc
+        - wireshark
+        - atom
+        - meld
+        - dino
+        - thunderbird
+        - htop
+        - keepassx
       state: present
