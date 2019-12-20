@@ -1,20 +1,29 @@
 - hosts: localhost
   become: true
   tasks:
+  
   - name: "Install dependencies"
     apt:
       pkg:
         - flameshot
-        - peek
         - kolourpaint4
         - gwenview
         - tuxguitar
         - vlc
         - wireshark
-        - atom
         - meld
         - dino
         - thunderbird
         - htop
         - keepassx
       state: present
+    snap:
+      name: atom 
+      classic: yes
+  
+  - apt_repository:
+    repo: ppa:peek-developers/stable
+  - name: Update repositories cache and install "foo" package
+    apt:
+      name: peek
+      update_cache: yes 
