@@ -1,8 +1,38 @@
 - hosts: localhost
-  become: true
+  become: yes
+  vars:
+    qtInstallPath: "\"/home/anon\""
   tasks:
-  
-  - name: "Install dependencies"
+
+  - apt_repository:
+      repo: ppa:peek-developers/stable
+      state: present
+
+  - apt_repository:
+      repo: ppa:sunderme/texstudio
+      state: present
+
+  # puddletag
+  #- apt_repository:
+  #    repo: deb http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu xenial main
+  #    state: present
+
+
+  # Add specified repository into sources list.
+  #- apt_repository:
+  #    repo: deb https://deb.torproject.org/torproject.org bionic main
+  #    state: present
+
+  # Add source repository into sources list.
+  #- apt_repository:
+  #    repo: deb-src https://deb.torproject.org/torproject.org bionic main
+  #    state: present
+
+  - name: "test"
+    command:
+      cmd: echo "{{ lookup('env','username1') }}"
+
+  - name: "Install apt packages"
     apt:
       pkg:
         - flameshot
@@ -12,18 +42,112 @@
         - vlc
         - wireshark
         - meld
-        - dino
+        - dino-im
         - thunderbird
         - htop
         - keepassx
+        - sl
+        - cowsay
+        - tree
+        - gimp
+        - jpegoptim
+        - peek
+        - ghex
+        - tig
+        - mc
+        - apt-transport-https
+        - tor
+        - imagemagick 
+        - imagemagick-doc
+        - octave 
+        - octave-doc 
+        - gnuplot
+        - inkscape
+        - gimp
+        #- puddletag
+        - texstudio
+        - nmap
+        - influxdb
+        - mysql-server
+        - traceroute
       state: present
+      update_cache: yes
+
+  # check if qt installer is already downloaded otherwise download it
+  - name: "Download QT"
+    get_url:
+      url: http://qt-mirror.dannhauer.de/archive/qt/5.14/5.14.2/qt-opensource-linux-x64-5.14.2.run
+      dest: /tmp/qt-opensource-linux-x64-5.14.2.run
+      mode: '0777'
+
+  - name: "replace installation path of qt"
+    replace:
+      path: qt-installer-noninteractive.qs
+      regexp: 'installer\.value\(\"HomeDir\"\)'
+      replace: "{{ qtInstallPath }}"
+
+  - name: "remove qt installation path"
+    file:
+      path: "{{ qtInstallPath }}"
+      state: absent
+
+  - name: "install gui-installer qt by script"
+    command:
+      cmd: "./qt-opensource-linux-x64-5.14.2.run --script qt-installer-noninteractive.qs"
+    environment:
+      http_proxy: 0.0.0.0:123
+      https_proxy: 0.0.0.0:123
+      ftp_proxy: 0.0.0.0:123
+
+  - name: "replace installation path of qt"
+    replace:
+      path: qt-installer-noninteractive.qs
+      regexp: "{{ qtInstallPath }}"
+      replace: 'installer.value("HomeDir")'
+
+  - name: "Remove old docker installations"
+    apt:
+      pkg: 
+       - docker docker-engine docker.io containerd runc
+      state: absent
+
+  - name: "Install docker dependencies"
+    apt:
+      pkg:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-agent
+        - software-properties-common
+      state: present
+
+  - name: "add dockers pgp key"
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: "add apt-repository for docker"
+    apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu bionic stable
+      state: present
+
+  - name: "Update apt cache and install docker packages"
+    apt:
+      name: docker-ce 
+      update_cache: yes
+
+  - name: "Update apt cache and install docker packages"
+    apt:
+      pkg:
+        - docker-ce 
+        - docker-ce-cli 
+        - containerd.io
+      update_cache: yes
+
+  - name: "Install snap packages"
     snap:
       name: atom 
       classic: yes
+      name: pycharm-community
+      classic: yes
   
-  - apt_repository:
-    repo: ppa:peek-developers/stable
-  - name: Update repositories cache and install "foo" package
-    apt:
-      name: peek
-      update_cache: yes 
